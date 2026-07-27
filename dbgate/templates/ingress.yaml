@@ -28,9 +28,19 @@ spec:
     - host: {{ .host | quote }}
       http:
         paths:
+          {{- if .paths }}
           {{- range .paths }}
           - path: {{ .path }}
             pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "dbgate.fullname" $ }}
+                port:
+                  number: {{ $.Values.service.port }}
+          {{- end }}
+          {{- else }}
+          - path: /
+            pathType: Prefix
             backend:
               service:
                 name: {{ include "dbgate.fullname" $ }}
