@@ -1,0 +1,18 @@
+apiVersion: v2
+name: dbgate
+description: A Helm chart for DbGate - Database management client
+type: application
+version: 0.1.0
+appVersion: "5.5.5"
+keywords:
+  - database
+  - sql
+  - mysql
+  - postgresql
+  - mongodb
+  - redis
+home: https://github.com/dbgate/dbgate
+sources:
+  - https://github.com/dbgate/dbgate
+maintainers:
+  - name: antiantiops
