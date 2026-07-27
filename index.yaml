@@ -3,7 +3,30 @@ entries:
   dbgate:
   - apiVersion: v2
     appVersion: 5.5.5
-    created: "2026-07-27T06:09:28.603818251Z"
+    created: "2026-07-27T06:13:39.239310009Z"
+    description: A Helm chart for DbGate - Database management client
+    digest: 893b5bed77052ecbba2ce65fbaf372e9ad71096e07384b97e27cb21e0daba882
+    home: https://dbgate.org/
+    icon: https://raw.githubusercontent.com/antiantiops/dbgate-helm-chart/main/dbgate/icon.png
+    keywords:
+    - database
+    - sql
+    - mysql
+    - postgresql
+    - mongodb
+    - redis
+    maintainers:
+    - name: antiantiops
+    name: dbgate
+    sources:
+    - https://github.com/dbgate/dbgate
+    type: application
+    urls:
+    - https://antiantiops.github.io/dbgate-helm-chart/dbgate-0.1.3.tgz
+    version: 0.1.3
+  - apiVersion: v2
+    appVersion: 5.5.5
+    created: "2026-07-27T06:13:39.238499936Z"
     description: A Helm chart for DbGate - Database management client
     digest: dc8a3bb492e458c4f5d37a89ca42dc815636455d9fc790520f4d23314b5478c3
     home: https://dbgate.org/
@@ -26,7 +49,7 @@ entries:
     version: 0.1.2
   - apiVersion: v2
     appVersion: 5.5.5
-    created: "2026-07-27T06:09:28.602892648Z"
+    created: "2026-07-27T06:13:39.237629048Z"
     description: A Helm chart for DbGate - Database management client
     digest: f476d3e244580cf58e95668cba89170ea85f534fcce1e170987671e561364df2
     home: https://github.com/dbgate/dbgate
@@ -46,4 +69,4 @@ entries:
     urls:
     - https://antiantiops.github.io/dbgate-helm-chart/dbgate-0.1.1.tgz
     version: 0.1.1
-generated: "2026-07-27T06:09:28.602078835Z"
+generated: "2026-07-27T06:13:39.237076466Z"
