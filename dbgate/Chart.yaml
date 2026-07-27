@@ -2,7 +2,7 @@ apiVersion: v2
 name: dbgate
 description: A Helm chart for DbGate - Database management client
 type: application
-version: 0.1.7
+version: 0.1.8
 appVersion: "7.2.3"
 keywords:
   - database
