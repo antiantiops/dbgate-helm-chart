@@ -6,6 +6,7 @@ on:
     paths-ignore:
       - index.yaml
       - '*.tgz'
+  workflow_dispatch: {}
 
 concurrency:
   group: helm-chart-release-main
