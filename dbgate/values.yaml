@@ -81,4 +81,4 @@ persistence:
   storageClass: ""
   accessMode: ReadWriteOnce
   size: 1Gi
-  mountPath: /.dbgate
+  mountPath: /root/.dbgate
