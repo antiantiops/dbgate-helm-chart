@@ -1,94 +1,103 @@
 # DbGate Helm Chart
 
-Helm chart for deploying [DbGate](https://github.com/dbgate/dbgate) - a modern database management client that supports MySQL, PostgreSQL, MongoDB, Redis, and more.
+<p align="center">
+  <img src="dbgate/icon.png" alt="DbGate" width="128" />
+</p>
 
-## Installation
+<p align="center">
+  <a href="https://github.com/antiantiops/dbgate-helm-chart/releases"><img src="https://img.shields.io/github/v/release/antiantiops/dbgate-helm-chart?label=chart&sort=semver" alt="Chart Version"></a>
+  <a href="https://github.com/antiantiops/dbgate-helm-chart/actions/workflows/ci.yaml"><img src="https://github.com/antiantiops/dbgate-helm-chart/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/dbgate/dbgate"><img src="https://img.shields.io/badge/app-DbGate-blue" alt="DbGate"></a>
+  <a href="https://github.com/antiantiops/dbgate-helm-chart/blob/main/LICENSE"><img src="https://img.shields.io/github/license/antiantiops/dbgate-helm-chart" alt="License"></a>
+</p>
+
+Helm chart to deploy [DbGate](https://dbgate.org/) — a fast, modern, open-source database client and SQL editor supporting MySQL, PostgreSQL, SQL Server, MongoDB, Redis, SQLite, Oracle, and more — on Kubernetes.
+
+## Quick Start
 
 ```bash
-helm repo add antiantiops https://antiantiops.github.io/dbgate-helm-chart
+helm repo add dbgate https://antiantiops.github.io/dbgate-helm-chart
 helm repo update
-helm install dbgate antiantiops/dbgate
+helm upgrade --install dbgate dbgate/dbgate \
+  --namespace dbgate --create-namespace
 ```
 
-Or install from source:
+Then access DbGate:
 
 ```bash
-git clone https://github.com/antiantiops/dbgate-helm-chart.git
-cd dbgate-helm-chart
-helm install dbgate ./dbgate
+kubectl port-forward svc/dbgate 3000:3000 -n dbgate
+# Open http://localhost:3000
+```
+
+## Production Example
+
+```yaml
+# values-production.yaml
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: dbgate.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: dbgate-tls
+      hosts:
+        - dbgate.example.com
+
+persistence:
+  storageClass: longhorn
+  size: 5Gi
+
+resources:
+  limits:
+    cpu: "1"
+    memory: 1Gi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+```
+
+```bash
+helm upgrade --install dbgate dbgate/dbgate -n dbgate -f values-production.yaml
 ```
 
 ## Configuration
 
-Key configuration options in `values.yaml`:
+| Value | Default | Description |
+| --- | --- | --- |
+| `image.repository` | `dbgate/dbgate` | Container image |
+| `image.tag` | `5.5.5` | Image tag |
+| `service.type` | `ClusterIP` | Service type |
+| `service.port` | `3000` | Service port |
+| `ingress.enabled` | `false` | Create Ingress |
+| `ingress.className` | `""` | IngressClass |
+| `persistence.enabled` | `true` | Enable PVC |
+| `persistence.size` | `1Gi` | PVC size |
+| `persistence.storageClass` | `""` | StorageClass |
+| `resources.limits.cpu` | `500m` | CPU limit |
+| `resources.limits.memory` | `512Mi` | Memory limit |
+| `env` | `[]` | Extra environment variables |
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `image.repository` | DbGate image repository | `dbgate/dbgate` |
-| `image.tag` | DbGate image tag | `5.5.5` |
-| `service.type` | Kubernetes service type | `ClusterIP` |
-| `service.port` | Service port | `3000` |
-| `ingress.enabled` | Enable ingress | `false` |
-| `persistence.enabled` | Enable persistent storage | `true` |
-| `persistence.size` | PVC size | `1Gi` |
-| `resources.limits.cpu` | CPU limit | `500m` |
-| `resources.limits.memory` | Memory limit | `512Mi` |
-
-## Examples
-
-### Basic deployment
-```bash
-helm install dbgate ./dbgate
-```
-
-### With ingress
-```bash
-helm install dbgate ./dbgate \
-  --set ingress.enabled=true \
-  --set ingress.hosts[0].host=dbgate.example.com
-```
-
-### Custom resources
-```bash
-helm install dbgate ./dbgate \
-  --set resources.limits.memory=1Gi \
-  --set resources.requests.cpu=200m
-```
-
-### Without persistence
-```bash
-helm install dbgate ./dbgate \
-  --set persistence.enabled=false
-```
-
-## Accessing DbGate
-
-After installation:
-
-```bash
-# Port-forward to local machine
-kubectl port-forward svc/dbgate 3000:3000
-
-# Open browser
-open http://localhost:3000
-```
+See [`dbgate/values.yaml`](dbgate/values.yaml) for the full list.
 
 ## Features
 
-- ✅ Persistent storage for database connections
-- ✅ Configurable resource limits
-- ✅ Ingress support
-- ✅ Horizontal pod autoscaling
-- ✅ Security context
-- ✅ Liveness/readiness probes
-
-## Uninstall
-
-```bash
-helm uninstall dbgate
-```
+- ✅ Persistent storage for connections, queries, and settings
+- ✅ Configurable resource limits and requests
+- ✅ Ingress with TLS support
+- ✅ Horizontal Pod Autoscaling
+- ✅ Security context (non-root)
+- ✅ Liveness and readiness probes
+- ✅ Automated releases via GitHub Actions
 
 ## Links
 
+- [DbGate Website](https://dbgate.org/)
 - [DbGate GitHub](https://github.com/dbgate/dbgate)
-- [DbGate Documentation](https://dbgate.org/)
+- [Artifact Hub](https://artifacthub.io/) *(pending registration)*
+
+## License
+
+This chart is open-source. DbGate itself is licensed under the [MIT License](https://github.com/dbgate/dbgate/blob/master/LICENSE).

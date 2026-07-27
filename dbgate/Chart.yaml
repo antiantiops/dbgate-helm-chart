@@ -11,7 +11,8 @@ keywords:
   - postgresql
   - mongodb
   - redis
-home: https://github.com/dbgate/dbgate
+home: https://dbgate.org/
+icon: https://raw.githubusercontent.com/antiantiops/dbgate-helm-chart/main/dbgate/icon.png
 sources:
   - https://github.com/dbgate/dbgate
 maintainers:
