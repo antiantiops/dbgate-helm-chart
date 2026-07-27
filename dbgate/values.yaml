@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: dbgate/dbgate
   pullPolicy: IfNotPresent
-  tag: "5.5.5"
+  tag: "7.2.3"
 
 imagePullSecrets: []
 nameOverride: ""
