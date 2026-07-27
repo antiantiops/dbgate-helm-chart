@@ -1,0 +1,90 @@
+name: Release Helm chart
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - index.yaml
+      - '*.tgz'
+
+concurrency:
+  group: helm-chart-release-main
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: azure/setup-helm@v4
+
+      - name: Calculate next patch version from Git tags
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --force --tags
+          latest_tag="$(git tag -l '[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n1)"
+          if [[ -z "$latest_tag" ]]; then
+            latest_tag="0.1.0"
+          fi
+          if ! [[ "$latest_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Latest tag is not a stable X.Y.Z version: $latest_tag" >&2
+            exit 1
+          fi
+          IFS=. read -r major minor patch <<< "$latest_tag"
+          version="$major.$minor.$((patch + 1))"
+          echo "latest=$latest_tag" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Synchronize Chart.yaml version with release tag
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          sed -i -E "s/^version: .*/version: ${VERSION}/" dbgate/Chart.yaml
+          grep -Fx "version: ${VERSION}" dbgate/Chart.yaml
+
+      - name: Test chart
+        run: |
+          helm lint dbgate
+          helm template dbgate dbgate --namespace dbgate > /tmp/dbgate-manifests.yaml
+          test -s /tmp/dbgate-manifests.yaml
+
+      - name: Package chart and refresh public index
+        run: |
+          helm package dbgate --destination .
+          helm repo index . --url https://antiantiops.github.io/dbgate-helm-chart
+
+      - name: Publish chart source, archive, and index
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add dbgate/Chart.yaml index.yaml "dbgate-${VERSION}.tgz"
+          git commit -m "chore: release chart ${VERSION}"
+          git push origin HEAD:main
+
+      - name: Create source tag
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          git tag -a "$VERSION" -m "Helm chart $VERSION"
+          git push origin "refs/tags/$VERSION"
+
+      - name: Create GitHub Release and attach chart archive
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          files: dbgate-${{ steps.version.outputs.version }}.tgz
