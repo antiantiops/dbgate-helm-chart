@@ -18,16 +18,9 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext:
-  fsGroup: 1000
+podSecurityContext: {}
 
-securityContext:
-  capabilities:
-    drop:
-    - ALL
-  readOnlyRootFilesystem: false
-  runAsNonRoot: true
-  runAsUser: 1000
+securityContext: {}
 
 service:
   type: ClusterIP
@@ -88,4 +81,4 @@ persistence:
   storageClass: ""
   accessMode: ReadWriteOnce
   size: 1Gi
-  mountPath: /root/.dbgate
+  mountPath: /.dbgate
