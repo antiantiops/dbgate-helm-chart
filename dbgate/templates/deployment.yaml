@@ -56,7 +56,7 @@ spec:
           mountPath: {{ .Values.persistence.mountPath }}
         {{- end }}
         {{- with .Values.volumeMounts }}
-        {{- toYaml . | nindent 12 }}
+        {{- toYaml . | nindent 8 }}
         {{- end }}
       volumes:
       {{- if .Values.persistence.enabled }}
@@ -65,7 +65,7 @@ spec:
           claimName: {{ include "dbgate.fullname" . }}
       {{- end }}
       {{- with .Values.volumes }}
-      {{- toYaml . | nindent 8 }}
+      {{- toYaml . | nindent 6 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
